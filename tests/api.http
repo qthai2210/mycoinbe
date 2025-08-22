@@ -1,0 +1,237 @@
+@baseUrl = http://localhost:4000/api
+@walletAddress1 = replace_with_wallet1_address
+@privateKey1 = replace_with_wallet1_private_key
+@walletAddress2 = replace_with_wallet2_address
+
+### Variables (Replace these values with the actual values after creating wallets)
+# @walletAddress1 = abc123...
+# @privateKey1 = def456...
+# @walletAddress2 = ghi789...
+
+### 1. Create First Wallet
+POST {{baseUrl}}/wallets
+Content-Type: application/json
+
+{
+  "userId": "user123"
+}
+
+### Example Response for Create First Wallet
+# HTTP/1.1 201 Created
+# {
+#   "success": true,
+#   "message": "Wallet created successfully",
+#   "data": {
+#     "address": "0x3a1b2c3d4e5f...",
+#     "balance": 100,
+#     "passphrase": "random generated passphrase"
+#   }
+# }
+
+### 2. Create Second Wallet
+POST {{baseUrl}}/wallets
+Content-Type: application/json
+
+{
+  "userId": "user456"
+}
+
+### Example Response for Create Second Wallet
+# HTTP/1.1 201 Created
+# {
+#   "success": true,
+#   "message": "Wallet created successfully",
+#   "data": {
+#     "address": "0x6a7b8c9d0e1f...",
+#     "balance": 100,
+#     "passphrase": "random generated passphrase"
+#   }
+# }
+
+### 3. Create Wallet with Custom Passphrase
+POST {{baseUrl}}/wallets
+Content-Type: application/json
+
+{
+  "userId": "user789",
+  "passphrase": "my secure passphrase with multiple words"
+}
+
+### Example Response for Create Wallet with Custom Passphrase
+# HTTP/1.1 201 Created
+# {
+#   "success": true,
+#   "message": "Wallet created successfully",
+#   "data": {
+#     "address": "0x9a8b7c6d5e4f...",
+#     "balance": 100,
+#     "passphrase": "my secure passphrase with multiple words"
+#   }
+# }
+
+### 4. Get Wallet Statistics (Balance)
+GET {{baseUrl}}/wallets/{{walletAddress1}}/stats
+
+### Example Response for Get Wallet Statistics
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "address": "0x3a1b2c3d4e5f...",
+#     "balance": 100,
+#     "createdAt": "2023-08-22T15:42:01.123Z"
+#   }
+# }
+
+### 5. Get Wallet with Private Key (For Testing Only)
+GET {{baseUrl}}/wallets/{{walletAddress1}}/test
+
+### Example Response for Get Wallet with Private Key
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "address": "0x3a1b2c3d4e5f...",
+#     "privateKey": "a1b2c3d4e5f6...",
+#     "publicKey": "g7h8i9j0k1l2...",
+#     "balance": 100,
+#     "passphrase": "random generated passphrase"
+#   }
+# }
+
+### 6. Send Coins Between Wallets
+POST {{baseUrl}}/transactions/send
+Content-Type: application/json
+
+{
+  "fromAddress": "{{walletAddress1}}",
+  "toAddress": "{{walletAddress2}}",
+  "amount": 25,
+  "privateKey": "{{privateKey1}}"
+}
+
+### Example Response for Send Coins
+# HTTP/1.1 201 Created
+# {
+#   "success": true,
+#   "message": "Transaction completed successfully",
+#   "data": {
+#     "transactionId": "tx123456789",
+#     "fromAddress": "0x3a1b2c3d4e5f...",
+#     "toAddress": "0x6a7b8c9d0e1f...",
+#     "amount": 25,
+#     "timestamp": "2023-08-22T15:45:30.123Z"
+#   }
+# }
+
+### 7. View Transaction History
+GET {{baseUrl}}/transactions/{{walletAddress1}}/history
+
+### Example Response for Transaction History
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "transactionId": "tx123456789",
+#       "fromAddress": "0x3a1b2c3d4e5f...",
+#       "toAddress": "0x6a7b8c9d0e1f...",
+#       "amount": 25,
+#       "timestamp": "2023-08-22T15:45:30.123Z",
+#       "type": "outgoing"
+#     },
+#     {
+#       "transactionId": "tx987654321",
+#       "fromAddress": "0x6a7b8c9d0e1f...",
+#       "toAddress": "0x3a1b2c3d4e5f...",
+#       "amount": 10,
+#       "timestamp": "2023-08-22T14:30:15.123Z",
+#       "type": "incoming"
+#     }
+#   ]
+# }
+
+### 8. Check Wallet Balance After Transaction (Sender)
+GET {{baseUrl}}/wallets/{{walletAddress1}}/stats
+
+### Example Response for Sender Wallet After Transaction
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "address": "0x3a1b2c3d4e5f...",
+#     "balance": 75,
+#     "createdAt": "2023-08-22T15:42:01.123Z"
+#   }
+# }
+
+### 9. Check Wallet Balance After Transaction (Receiver)
+GET {{baseUrl}}/wallets/{{walletAddress2}}/stats
+
+### Example Response for Receiver Wallet After Transaction
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "address": "0x6a7b8c9d0e1f...",
+#     "balance": 125,
+#     "createdAt": "2023-08-22T15:42:30.123Z"
+#   }
+# }
+
+### 10. Generate Secret Recovery Phrase
+POST {{baseUrl}}/wallets/generate-phrase
+Content-Type: application/json
+
+{
+  "wordCount": 12
+}
+
+### Example Response for Generate Secret Recovery Phrase
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "mnemonic": "apple banana cherry dog elephant friend grape hello island jungle kite lion",
+#     "words": [
+#       { "number": 1, "word": "apple" },
+#       { "number": 2, "word": "banana" },
+#       { "number": 3, "word": "cherry" },
+#       { "number": 4, "word": "dog" },
+#       { "number": 5, "word": "elephant" },
+#       { "number": 6, "word": "friend" },
+#       { "number": 7, "word": "grape" },
+#       { "number": 8, "word": "hello" },
+#       { "number": 9, "word": "island" },
+#       { "number": 10, "word": "jungle" },
+#       { "number": 11, "word": "kite" },
+#       { "number": 12, "word": "lion" }
+#     ],
+#     "instructions": [
+#       "This is the recovery phrase for your wallet. You and you alone have access to it.",
+#       "It can be used to restore your wallet.",
+#       "Best practices for your recovery phrase are to write it down on paper and store it somewhere secure.",
+#       "Resist temptation to email it to yourself or screenshot it."
+#     ]
+#   }
+# }
+
+### 11. Restore Wallet from Recovery Phrase
+POST {{baseUrl}}/wallets/restore
+Content-Type: application/json
+
+{
+  "userId": "user123",
+  "mnemonic": "apple banana cherry dog elephant friend grape hello island jungle kite lion"
+}
+
+### Example Response for Restore Wallet from Recovery Phrase
+# HTTP/1.1 201 Created
+# {
+#   "success": true,
+#   "message": "Wallet restored successfully",
+#   "data": {
+#     "address": "0x3a1b2c3d4e5f...",
+#     "balance": 100
+#   }
+# }
