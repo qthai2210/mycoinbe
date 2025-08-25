@@ -15,7 +15,7 @@ class WalletService {
       // Save wallet to database
       const wallet = new Wallet({
         address: walletData.address,
-        privateKey: walletData.privateKey,
+        privateKey: walletData.privateKey, // Make sure private key is stored
         publicKey: walletData.publicKey,
         passphrase: walletData.passphrase,
         userId: userId || null,
@@ -23,10 +23,16 @@ class WalletService {
       });
 
       await wallet.save();
+
+      // Return the complete wallet data including the private key
       return {
         address: wallet.address,
         balance: wallet.balance,
         passphrase: wallet.passphrase,
+        privateKey: walletData.privateKey, // Return the unencrypted private key
+        publicKey: wallet.publicKey,
+        userId: wallet.userId,
+        createdAt: wallet.createdAt,
       };
     } catch (error) {
       throw new Error(`Error creating wallet: ${error.message}`);

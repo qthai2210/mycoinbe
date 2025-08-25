@@ -58,10 +58,35 @@ class WalletController {
       const { userId, passphrase } = req.body;
       const wallet = await walletService.createWallet(userId, passphrase);
 
+      // For debugging
+      console.log('Wallet created with data:', {
+        address: wallet.address,
+        hasPrivateKey: !!wallet.privateKey,
+        privateKeyLength: wallet.privateKey ? wallet.privateKey.length : 0,
+      });
+
       return res.status(201).json({
         success: true,
         message: 'Wallet created successfully',
-        data: wallet,
+        data: {
+          address: wallet.address,
+          balance: wallet.balance,
+          passphrase: wallet.passphrase,
+          privateKey: wallet.privateKey, // This should now be present from the service
+          userId: wallet.userId,
+          publicKey: wallet.publicKey,
+          createdAt: wallet.createdAt,
+          network: {
+            name: 'MyCoin Network',
+            chainId: 1337,
+            currency: 'MYCOIN',
+          },
+          qrCode: `ethereum:${wallet.address}`,
+          status: 'active',
+          links: {
+            viewOnExplorer: `/explorer/address/${wallet.address}`,
+          },
+        },
       });
     } catch (error) {
       return res.status(500).json({
@@ -255,5 +280,14 @@ class WalletController {
     }
   }
 }
+
+// module.exports = new WalletController();
+//         success: false,
+//         message: 'Error restoring wallet',
+//         error: error.message,
+//       });
+//     }
+//   }
+// }
 
 module.exports = new WalletController();

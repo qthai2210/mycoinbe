@@ -28,16 +28,18 @@ const generateWallet = (passphrase = null) => {
   const publicKey = keyPair.getPublic('hex');
 
   // Generate address from public key
-  const address = crypto
-    .createHash('sha256')
-    .update(publicKey)
-    .digest('hex')
-    .substring(0, 40); // Use first 40 chars as address
+  const address =
+    // '0x' +
+    crypto
+      .createHash('sha256')
+      .update(publicKey)
+      .digest('hex')
+      .substring(0, 40); // Take first 40 chars after '0x' prefix
 
   return {
-    privateKey,
+    privateKey, // This must be the raw private key
     publicKey,
-    address,
+    address: '0x' + address, // Make sure address has 0x prefix
     passphrase: mnemonic,
   };
 };

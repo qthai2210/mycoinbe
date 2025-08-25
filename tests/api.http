@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:4000/api
-@walletAddress1 = replace_with_wallet1_address
-@privateKey1 = replace_with_wallet1_private_key
-@walletAddress2 = replace_with_wallet2_address
+@walletAddress1 = 0x802ce91f01c5a45e62fec1f1dd18804558a3bf6e
+@privateKey1 = 9ec5b528bbb19c6afd28e34120a5b6e6d4a052c401f0cc3d39a6c517cb745ab4
+@walletAddress2 = 0xb925f296381ab2a39b95bfccaf4724501d69db61
 
 ### Variables (Replace these values with the actual values after creating wallets)
 # @walletAddress1 = abc123...
@@ -24,7 +24,22 @@ Content-Type: application/json
 #   "data": {
 #     "address": "0x3a1b2c3d4e5f...",
 #     "balance": 100,
-#     "passphrase": "random generated passphrase"
+#     "passphrase": "random generated passphrase",
+#     "privateKey": "a1b2c3d4e5f6...", 
+#     "userId": "user123",
+#     "publicKey": "04a1b2c3d4e5...",
+#     "createdAt": "2023-08-22T15:42:01.123Z",
+#     "hasPrivateKey": true,
+#     "network": {
+#       "name": "MyCoin Network",
+#       "chainId": 1337,
+#       "currency": "MYCOIN"
+#     },
+#     "qrCode": "ethereum:0x3a1b2c3d4e5f...",
+#     "status": "active",
+#     "links": {
+#       "viewOnExplorer": "/explorer/address/0x3a1b2c3d4e5f..."
+#     }
 #   }
 # }
 
@@ -44,7 +59,8 @@ Content-Type: application/json
 #   "data": {
 #     "address": "0x6a7b8c9d0e1f...",
 #     "balance": 100,
-#     "passphrase": "random generated passphrase"
+#     "passphrase": "random generated passphrase",
+#     "privateKey": "b2c3d4e5f6a7..."
 #   }
 # }
 
@@ -65,7 +81,8 @@ Content-Type: application/json
 #   "data": {
 #     "address": "0x9a8b7c6d5e4f...",
 #     "balance": 100,
-#     "passphrase": "my secure passphrase with multiple words"
+#     "passphrase": "my secure passphrase with multiple words",
+#     "privateKey": "c3d4e5f6a7b8..."
 #   }
 # }
 
