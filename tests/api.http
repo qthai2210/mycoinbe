@@ -252,3 +252,69 @@ Content-Type: application/json
 #     "balance": 100
 #   }
 # }
+
+### 12. Get All Blockchain Transactions
+GET {{baseUrl}}/transactions/blockchain
+
+### Example Response for Get All Blockchain Transactions
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "transactions": [
+#       {
+#         "transactionId": "tx123456789",
+#         "fromAddress": "0x3a1b2c3d4e5f...",
+#         "toAddress": "0x6a7b8c9d0e1f...",
+#         "amount": 25,
+#         "timestamp": "2023-08-22T15:45:30.123Z"
+#       },
+#       {
+#         "transactionId": "tx987654321",
+#         "fromAddress": "0x6a7b8c9d0e1f...",
+#         "toAddress": "0x3a1b2c3d4e5f...",
+#         "amount": 10,
+#         "timestamp": "2023-08-22T14:30:15.123Z"
+#       }
+#     ],
+#     "pagination": {
+#       "total": 25,
+#       "page": 1,
+#       "limit": 10,
+#       "pages": 3
+#     }
+#   }
+# }
+
+### 13. Get Blockchain Transactions with Pagination
+GET {{baseUrl}}/transactions/blockchain?page=2&limit=5
+
+### Example Response for Get Blockchain Transactions with Pagination
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "transactions": [
+#       {
+#         "transactionId": "tx567890123",
+#         "fromAddress": "0x3a1b2c3d4e5f...",
+#         "toAddress": "0x6a7b8c9d0e1f...",
+#         "amount": 15,
+#         "timestamp": "2023-08-22T13:20:10.123Z"
+#       },
+#       {
+#         "transactionId": "tx345678901",
+#         "fromAddress": "0x9a8b7c6d5e4f...",
+#         "toAddress": "0x3a1b2c3d4e5f...",
+#         "amount": 5,
+#         "timestamp": "2023-08-22T12:15:45.123Z"
+#       }
+#     ],
+#     "pagination": {
+#       "total": 25,
+#       "page": 2,
+#       "limit": 5,
+#       "pages": 5
+#     }
+#   }
+# }

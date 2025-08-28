@@ -8,4 +8,7 @@ router.post('/send', transactionController.sendCoins);
 // Get transaction history
 router.get('/:address/history', transactionController.getTransactionHistory);
 
+// Get all blockchain transactions with pagination
+router.get('/blockchain', transactionController.getAllBlockchainTransactions);
+
 module.exports = router;

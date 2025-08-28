@@ -57,6 +57,33 @@ class TransactionController {
       });
     }
   }
+
+  /**
+   * Get all transactions in the blockchain with pagination
+   */
+  async getAllBlockchainTransactions(req, res) {
+    try {
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+
+      const result = await transactionService.getAllBlockchainTransactions(
+        page,
+        limit,
+      );
+
+      return res.status(200).json({
+        success: true,
+        data: result,
+      });
+    } catch (error) {
+      console.error('Error getting blockchain transactions:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to get blockchain transactions',
+        error: error.message,
+      });
+    }
+  }
 }
 
 module.exports = new TransactionController();

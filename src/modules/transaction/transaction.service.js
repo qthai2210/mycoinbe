@@ -102,6 +102,43 @@ class TransactionService {
       throw new Error(`Error getting transaction history: ${error.message}`);
     }
   }
+
+  /**
+   * Get all blockchain transactions with pagination
+   * @param {number} page - Page number for pagination
+   * @param {number} limit - Number of transactions per page
+   * @returns {Object} Transactions and pagination metadata
+   */
+  async getAllBlockchainTransactions(page, limit) {
+    try {
+      // Calculate skip value for pagination
+      const skip = (page - 1) * limit;
+
+      // Get total count of transactions
+      const total = await Transaction.countDocuments();
+
+      // Get transactions for the specified page
+      const transactions = await Transaction.find()
+        .sort({ timestamp: -1 }) // Sort by timestamp descending (newest first)
+        .skip(skip)
+        .limit(limit);
+
+      // Calculate total pages
+      const pages = Math.ceil(total / limit);
+
+      return {
+        transactions,
+        pagination: {
+          total,
+          page,
+          limit,
+          pages,
+        },
+      };
+    } catch (error) {
+      throw new Error(`Error getting transactions: ${error.message}`);
+    }
+  }
 }
 
 module.exports = new TransactionService();
