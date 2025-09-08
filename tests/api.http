@@ -1,20 +1,15 @@
 @baseUrl = http://localhost:4000/api
-@walletAddress1 = 0x802ce91f01c5a45e62fec1f1dd18804558a3bf6e
-@privateKey1 = 9ec5b528bbb19c6afd28e34120a5b6e6d4a052c401f0cc3d39a6c517cb745ab4
-@walletAddress2 = 0xb925f296381ab2a39b95bfccaf4724501d69db61
 
 ### Variables (Replace these values with the actual values after creating wallets)
-# @walletAddress1 = abc123...
+# @walletAddress1 = MYCOIN123abc...
 # @privateKey1 = def456...
-# @walletAddress2 = ghi789...
+# @walletAddress2 = MYCOIN789xyz...
 
 ### 1. Create First Wallet
 POST {{baseUrl}}/wallets
 Content-Type: application/json
 
-{
-  "userId": "user123"
-}
+{}
 
 ### Example Response for Create First Wallet
 # HTTP/1.1 201 Created
@@ -22,24 +17,10 @@ Content-Type: application/json
 #   "success": true,
 #   "message": "Wallet created successfully",
 #   "data": {
-#     "address": "0x3a1b2c3d4e5f...",
-#     "balance": 100,
-#     "passphrase": "random generated passphrase",
-#     "privateKey": "a1b2c3d4e5f6...", 
-#     "userId": "user123",
+#     "address": "MYCOIN123abc...",
 #     "publicKey": "04a1b2c3d4e5...",
-#     "createdAt": "2023-08-22T15:42:01.123Z",
-#     "hasPrivateKey": true,
-#     "network": {
-#       "name": "MyCoin Network",
-#       "chainId": 1337,
-#       "currency": "MYCOIN"
-#     },
-#     "qrCode": "ethereum:0x3a1b2c3d4e5f...",
-#     "status": "active",
-#     "links": {
-#       "viewOnExplorer": "/explorer/address/0x3a1b2c3d4e5f..."
-#     }
+#     "privateKey": "a1b2c3d4e5f6...", 
+#     "balance": 100
 #   }
 # }
 
@@ -47,9 +28,7 @@ Content-Type: application/json
 POST {{baseUrl}}/wallets
 Content-Type: application/json
 
-{
-  "userId": "user456"
-}
+{}
 
 ### Example Response for Create Second Wallet
 # HTTP/1.1 201 Created
@@ -57,92 +36,55 @@ Content-Type: application/json
 #   "success": true,
 #   "message": "Wallet created successfully",
 #   "data": {
-#     "address": "0x6a7b8c9d0e1f...",
-#     "balance": 100,
-#     "passphrase": "random generated passphrase",
-#     "privateKey": "b2c3d4e5f6a7..."
+#     "address": "MYCOIN789xyz...",
+#     "publicKey": "04g7h8i9j0k1...",
+#     "privateKey": "b2c3d4e5f6a7...",
+#     "balance": 100
 #   }
 # }
 
-### 3. Create Wallet with Custom Passphrase
-POST {{baseUrl}}/wallets
-Content-Type: application/json
+### 3. Get Wallet Details
+GET {{baseUrl}}/wallets/MYCOIN123abc...
 
-{
-  "userId": "user789",
-  "passphrase": "my secure passphrase with multiple words"
-}
-
-### Example Response for Create Wallet with Custom Passphrase
-# HTTP/1.1 201 Created
-# {
-#   "success": true,
-#   "message": "Wallet created successfully",
-#   "data": {
-#     "address": "0x9a8b7c6d5e4f...",
-#     "balance": 100,
-#     "passphrase": "my secure passphrase with multiple words",
-#     "privateKey": "c3d4e5f6a7b8..."
-#   }
-# }
-
-### 4. Get Wallet Statistics (Balance)
-GET {{baseUrl}}/wallets/{{walletAddress1}}/stats
-
-### Example Response for Get Wallet Statistics
+### Example Response for Get Wallet Details
 # HTTP/1.1 200 OK
 # {
 #   "success": true,
 #   "data": {
-#     "address": "0x3a1b2c3d4e5f...",
+#     "address": "MYCOIN123abc...",
+#     "publicKey": "04a1b2c3d4e5...",
 #     "balance": 100,
 #     "createdAt": "2023-08-22T15:42:01.123Z"
 #   }
 # }
 
-### 5. Get Wallet with Private Key (For Testing Only)
-GET {{baseUrl}}/wallets/{{walletAddress1}}/test
-
-### Example Response for Get Wallet with Private Key
-# HTTP/1.1 200 OK
-# {
-#   "success": true,
-#   "data": {
-#     "address": "0x3a1b2c3d4e5f...",
-#     "privateKey": "a1b2c3d4e5f6...",
-#     "publicKey": "g7h8i9j0k1l2...",
-#     "balance": 100,
-#     "passphrase": "random generated passphrase"
-#   }
-# }
-
-### 6. Send Coins Between Wallets
+### 4. Send Coins Between Wallets
 POST {{baseUrl}}/transactions/send
 Content-Type: application/json
 
 {
-  "fromAddress": "{{walletAddress1}}",
-  "toAddress": "{{walletAddress2}}",
+  "fromAddress": "MYCOIN123abc...",
+  "toAddress": "MYCOIN789xyz...",
   "amount": 25,
-  "privateKey": "{{privateKey1}}"
+  "privateKey": "a1b2c3d4e5f6..."
 }
 
 ### Example Response for Send Coins
-# HTTP/1.1 201 Created
+# HTTP/1.1 200 OK
 # {
 #   "success": true,
 #   "message": "Transaction completed successfully",
 #   "data": {
-#     "transactionId": "tx123456789",
-#     "fromAddress": "0x3a1b2c3d4e5f...",
-#     "toAddress": "0x6a7b8c9d0e1f...",
+#     "fromAddress": "MYCOIN123abc...",
+#     "toAddress": "MYCOIN789xyz...",
 #     "amount": 25,
-#     "timestamp": "2023-08-22T15:45:30.123Z"
+#     "hash": "0xabcdef123456...",
+#     "status": "CONFIRMED"
 #   }
 # }
 
-### 7. View Transaction History
-GET {{baseUrl}}/transactions/{{walletAddress1}}/history
+### 5. View Transaction History
+GET {{baseUrl}}/transactions/history/MYCOIN123abc...
 
 ### Example Response for Transaction History
 # HTTP/1.1 200 OK
@@ -150,71 +92,129 @@ GET {{baseUrl}}/transactions/{{walletAddress1}}/history
 #   "success": true,
 #   "data": [
 #     {
-#       "transactionId": "tx123456789",
-#       "fromAddress": "0x3a1b2c3d4e5f...",
-#       "toAddress": "0x6a7b8c9d0e1f...",
+#       "id": "6123456789abcdef...",
+#       "type": "SENT",
 #       "amount": 25,
+#       "withAddress": "MYCOIN789xyz...",
 #       "timestamp": "2023-08-22T15:45:30.123Z",
-#       "type": "outgoing"
+#       "status": "CONFIRMED",
+#       "hash": "0xabcdef123456..."
 #     },
 #     {
-#       "transactionId": "tx987654321",
-#       "fromAddress": "0x6a7b8c9d0e1f...",
-#       "toAddress": "0x3a1b2c3d4e5f...",
+#       "id": "6987654321fedcba...",
+#       "type": "RECEIVED",
 #       "amount": 10,
+#       "withAddress": "MYCOIN789xyz...",
 #       "timestamp": "2023-08-22T14:30:15.123Z",
-#       "type": "incoming"
+#       "status": "CONFIRMED",
+#       "hash": "0xfedcba654321..."
 #     }
 #   ]
 # }
 
-### 8. Check Wallet Balance After Transaction (Sender)
-GET {{baseUrl}}/wallets/{{walletAddress1}}/stats
+### 6. Check Wallet Balance After Transaction (Sender)
+GET {{baseUrl}}/wallets/MYCOIN123abc...
 
 ### Example Response for Sender Wallet After Transaction
 # HTTP/1.1 200 OK
 # {
 #   "success": true,
 #   "data": {
-#     "address": "0x3a1b2c3d4e5f...",
+#     "address": "MYCOIN123abc...",
+#     "publicKey": "04a1b2c3d4e5...",
 #     "balance": 75,
 #     "createdAt": "2023-08-22T15:42:01.123Z"
 #   }
 # }
 
-### 9. Check Wallet Balance After Transaction (Receiver)
-GET {{baseUrl}}/wallets/{{walletAddress2}}/stats
+### 7. Check Wallet Balance After Transaction (Receiver)
+GET {{baseUrl}}/wallets/MYCOIN789xyz...
 
 ### Example Response for Receiver Wallet After Transaction
 # HTTP/1.1 200 OK
 # {
 #   "success": true,
 #   "data": {
-#     "address": "0x6a7b8c9d0e1f...",
+#     "address": "MYCOIN789xyz...",
+#     "publicKey": "04g7h8i9j0k1...",
 #     "balance": 125,
 #     "createdAt": "2023-08-22T15:42:30.123Z"
 #   }
 # }
 
-### 10. Generate Secret Recovery Phrase
-POST {{baseUrl}}/wallets/generate-phrase
-Content-Type: application/json
+### 8. Get All Blockchain Transactions
+GET {{baseUrl}}/transactions/all
 
-{
-  "wordCount": 12
-}
-
-### Example Response for Generate Secret Recovery Phrase
+### Example Response for Get All Blockchain Transactions
 # HTTP/1.1 200 OK
 # {
 #   "success": true,
 #   "data": {
-#     "mnemonic": "apple banana cherry dog elephant friend grape hello island jungle kite lion",
-#     "words": [
-#       { "number": 1, "word": "apple" },
-#       { "number": 2, "word": "banana" },
-#       { "number": 3, "word": "cherry" },
-#       { "number": 4, "word": "dog" },
+#     "transactions": [
+#       {
+#         "_id": "6123456789abcdef...",
+#         "fromAddress": "MYCOIN123abc...",
+#         "toAddress": "MYCOIN789xyz...",
+#         "amount": 25,
+#         "hash": "0xabcdef123456...",
+#         "status": "CONFIRMED",
+#         "timestamp": "2023-08-22T15:45:30.123Z"
+#       },
+#       {
+#         "_id": "6987654321fedcba...",
+#         "fromAddress": "MYCOIN789xyz...",
+#         "toAddress": "MYCOIN123abc...",
+#         "amount": 10,
+#         "hash": "0xfedcba654321...",
+#         "status": "CONFIRMED",
+#         "timestamp": "2023-08-22T14:30:15.123Z"
+#       }
+#     ],
+#     "pagination": {
+#       "total": 25,
+#       "page": 1,
+#       "limit": 10,
+#       "pages": 3
+#     }
+#   }
+# }
+
+### 9. Get Blockchain Transactions with Pagination
+GET {{baseUrl}}/transactions/all?page=2&limit=5
+
+### Example Response for Get Blockchain Transactions with Pagination
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "transactions": [
+#       {
+#         "_id": "6567890123abcdef...",
+#         "fromAddress": "MYCOIN123abc...",
+#         "toAddress": "MYCOIN789xyz...",
+#         "amount": 15,
+#         "hash": "0x567890abcdef...",
+#         "status": "CONFIRMED",
+#         "timestamp": "2023-08-22T13:20:10.123Z"
+#       },
+#       {
+#         "_id": "6345678901fedcba...",
+#         "fromAddress": "MYCOIN789xyz...",
+#         "toAddress": "MYCOIN123abc...",
+#         "amount": 5,
+#         "hash": "0x345678fedcba...",
+#         "status": "CONFIRMED",
+#         "timestamp": "2023-08-22T12:15:45.123Z"
+#       }
+#     ],
+#     "pagination": {
+#       "total": 25,
+#       "page": 2,
+#       "limit": 5,
+#       "pages": 5
+#     }
+#   }
+# }
 #       { "number": 5, "word": "elephant" },
 #       { "number": 6, "word": "friend" },
 #       { "number": 7, "word": "grape" },
@@ -316,5 +316,116 @@ GET {{baseUrl}}/transactions/blockchain?page=2&limit=5
 #       "limit": 5,
 #       "pages": 5
 #     }
+#   }
+# }
+
+### 14. Set Mining Address
+POST {{baseUrl}}/mining/address
+Content-Type: application/json
+
+{
+  "address": "MYCOIN123abc..."
+}
+
+### Example Response for Set Mining Address
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "message": "Mining address set successfully",
+#   "data": {
+#     "address": "MYCOIN123abc..."
+#   }
+# }
+
+### 15. Get Mining Status
+GET {{baseUrl}}/mining/status
+
+### Example Response for Mining Status
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "data": {
+#     "mining": false,
+#     "difficulty": 4,
+#     "miningAddress": "MYCOIN123abc..."
+#   }
+# }
+
+### 16. Set Mining Difficulty
+POST {{baseUrl}}/mining/difficulty
+Content-Type: application/json
+
+{
+  "difficulty": 3
+}
+
+### Example Response for Set Mining Difficulty
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "message": "Difficulty updated successfully",
+#   "data": {
+#     "difficulty": 3
+#   }
+# }
+
+### 17. Start Mining Process
+POST {{baseUrl}}/mining/start
+Content-Type: application/json
+
+{}
+
+### Example Response for Start Mining
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "message": "Mining started successfully",
+#   "data": {
+#     "mining": true
+#   }
+# }
+
+### 18. Stop Mining Process
+POST {{baseUrl}}/mining/stop
+Content-Type: application/json
+
+{}
+
+### Example Response for Stop Mining
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "message": "Mining stopped successfully",
+#   "data": {
+#     "mining": false
+#   }
+# }
+
+### 19. Mine a Single Block (for testing)
+POST {{baseUrl}}/mining/mine-block
+Content-Type: application/json
+
+{
+  "minerAddress": "MYCOIN123abc..."
+}
+
+### Example Response for Mine Single Block
+# HTTP/1.1 200 OK
+# {
+#   "success": true,
+#   "message": "Block mined successfully",
+#   "data": {
+#     "timestamp": 1693054381023,
+#     "transactions": [
+#       {
+#         "fromAddress": null,
+#         "toAddress": "MYCOIN123abc...",
+#         "amount": 50
+#       }
+#     ],
+#     "previousHash": "0000a1b2c3d4e5f6...",
+#     "index": 5,
+#     "nonce": 24683,
+#     "hash": "000079e8a92c6b5d..."
 #   }
 # }

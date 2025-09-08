@@ -3,6 +3,7 @@ const cors = require('cors');
 const connectDB = require('./config/db.config');
 const walletRoutes = require('./modules/wallet/wallet.route');
 const transactionRoutes = require('./modules/transaction/transaction.route');
+const miningRoutes = require('./modules/mining/mining.route');
 
 // Initialize express app
 const app = express();
@@ -18,6 +19,7 @@ app.use(express.json());
 // Routes
 app.use('/api/wallets', walletRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/mining', miningRoutes);
 
 // Root route
 app.get('/', (req, res) => {
