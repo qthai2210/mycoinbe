@@ -413,19 +413,24 @@ Content-Type: application/json
 # HTTP/1.1 200 OK
 # {
 #   "success": true,
-#   "message": "Block mined successfully",
+#   "message": "Block mined successfully! 45 coins added to wallet.",
 #   "data": {
 #     "timestamp": 1693054381023,
 #     "transactions": [
 #       {
 #         "fromAddress": null,
 #         "toAddress": "MYCOIN123abc...",
-#         "amount": 50
+#         "amount": 45
 #       }
 #     ],
 #     "previousHash": "0000a1b2c3d4e5f6...",
 #     "index": 5,
 #     "nonce": 24683,
-#     "hash": "000079e8a92c6b5d..."
+#     "hash": "000079e8a92c6b5d...",
+#     "miningStats": {
+#       "difficulty": 4,
+#       "timeInSeconds": "3.21",
+#       "reward": 45
+#     }
 #   }
 # }

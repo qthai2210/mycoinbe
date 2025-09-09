@@ -136,8 +136,15 @@ exports.mineBlock = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Block mined successfully',
-      data: block,
+      message: `Block mined successfully! ${block.miningStats.reward} coins added to wallet.`,
+      data: {
+        ...block,
+        miningStats: {
+          difficulty: block.miningStats.difficulty,
+          timeInSeconds: block.miningStats.timeInSeconds.toFixed(2),
+          reward: block.miningStats.reward,
+        },
+      },
     });
   } catch (error) {
     return res.status(500).json({

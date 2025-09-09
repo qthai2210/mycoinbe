@@ -1,5 +1,42 @@
 const crypto = require('crypto');
 const mongoose = require('mongoose');
+// Import Wallet model to update miner's balance - use mongoose.models to avoid OverwriteModelError
+let Wallet;
+try {
+  // Try to get existing model
+  Wallet = mongoose.model('Wallet');
+} catch (error) {
+  // If model doesn't exist yet, it will be created when wallet.model.js is imported
+  Wallet = require('../wallet/wallet.model');
+}
+
+// Base mining reward amount
+const BASE_MINING_REWARD = 10;
+
+// Remove fixed MINING_REWARD and replace with a function to calculate it
+// Make calculateMiningReward function accessible to controller
+exports.calculateMiningReward = (difficulty, timeInSeconds) => {
+  // Formula: Base reward * difficulty factor * time efficiency factor
+  // Higher difficulty = more reward
+  // Faster mining (less time) = bonus reward
+
+  const difficultyFactor = difficulty;
+
+  // Calculate time efficiency factor (bonus for mining quickly)
+  // Base expectation: 10 seconds per difficulty level
+  const expectedTime = difficulty * 10;
+  const timeEfficiencyFactor = Math.max(
+    0.5,
+    Math.min(1.5, expectedTime / (timeInSeconds || 1)),
+  );
+
+  const reward = Math.round(
+    BASE_MINING_REWARD * difficultyFactor * timeEfficiencyFactor,
+  );
+
+  // Ensure minimum reward of BASE_MINING_REWARD
+  return Math.max(BASE_MINING_REWARD, reward);
+};
 
 // In a real application, you'd have models for these
 let miningConfig = {
@@ -92,17 +129,8 @@ exports.stopMining = async () => {
  * Mine a new block with pending transactions
  */
 exports.mineBlock = async (minerAddress) => {
-  // First, add mining reward transaction
-  const rewardTx = {
-    fromAddress: null, // null means it's a mining reward
-    toAddress: minerAddress,
-    amount: 50, // Mining reward
-    timestamp: Date.now(),
-    hash: crypto.randomBytes(32).toString('hex'),
-  };
-
-  // Add reward to pending transactions
-  blockchain.pendingTransactions.push(rewardTx);
+  // Record start time for mining
+  const startTime = Date.now();
 
   // Create a new block
   const previousBlock = blockchain.chain[blockchain.chain.length - 1];
@@ -117,11 +145,63 @@ exports.mineBlock = async (minerAddress) => {
   // Mine the block (find a valid hash)
   const validBlock = await this._proofOfWork(newBlock);
 
+  // Calculate mining time in seconds
+  const endTime = Date.now();
+  const miningTimeInSeconds = (endTime - startTime) / 1000;
+
+  // Calculate mining reward based on difficulty and time
+  const miningReward = this.calculateMiningReward(
+    miningConfig.difficulty,
+    miningTimeInSeconds,
+  );
+
+  // Create mining reward transaction
+  const rewardTx = {
+    fromAddress: null, // null means it's a mining reward
+    toAddress: minerAddress,
+    amount: miningReward, // Dynamic mining reward
+    timestamp: Date.now(),
+    hash: crypto.randomBytes(32).toString('hex'),
+  };
+
+  // Add reward transaction to the block
+  validBlock.transactions.push(rewardTx);
+
+  // Recalculate hash with the added reward transaction
+  validBlock.hash = this._calculateHash(validBlock);
+
   // Add the new block to the chain
   blockchain.chain.push(validBlock);
 
+  // Update the miner's wallet balance with the mining reward
+  try {
+    // Find the wallet by address and update its balance
+    const wallet = await Wallet.findOne({ address: minerAddress });
+
+    if (wallet) {
+      wallet.balance += miningReward;
+      await wallet.save();
+      console.log(
+        `Added ${miningReward} coins to wallet ${minerAddress} (Difficulty: ${miningConfig.difficulty}, Time: ${miningTimeInSeconds.toFixed(
+          2,
+        )}s)`,
+      );
+    } else {
+      console.error(`Wallet not found for mining address: ${minerAddress}`);
+    }
+  } catch (error) {
+    console.error('Error updating wallet balance:', error);
+  }
+
   // Clear pending transactions
   blockchain.pendingTransactions = [];
+
+  // Add mining stats to block
+  validBlock.miningStats = {
+    difficulty: miningConfig.difficulty,
+    timeInSeconds: miningTimeInSeconds,
+    reward: miningReward,
+  };
 
   return validBlock;
 };
